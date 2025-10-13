@@ -1,7 +1,7 @@
 import os
 import torch
 from dotenv import load_dotenv
-from diffusers import FluxKontextPipeline
+from diffusers import StableDiffusionPipeline
 from diffusers.utils import load_image
 from huggingface_hub import login
 
@@ -15,11 +15,13 @@ else:
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using device: {device}")
+dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
 
-pipe = FluxKontextPipeline.from_pretrained(
-    "black-forest-labs/FLUX.1-Kontext-dev",
-    torch_dtype=torch.bfloat16,
-    use_auth_token=True
+print("Loading Stable Diffusion 1.5...")
+pipe = StableDiffusionPipeline.from_pretrained(
+    ## "black-forest-labs/FLUX.1-Kontext-dev", TODO at this moment not supported by my local CPU
+    "runwayml/stable-diffusion-v1-5",
+    torch_dtype=dtype # Using float32 for better compatibility with CPU
 )
 pipe = pipe.to(device)
 
