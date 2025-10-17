@@ -1,14 +1,20 @@
 name: green-ai
 channels:
+  - pytorch
+  - conda-forge
   - defaults
 dependencies:
   - python=3.10
-  - python-dotenv
-  - pillow
-  - pytorch=2.4
-  - transformers[version='>=4.50']
+  - pytorch::pytorch=2.5.*
+  - pytorch::torchvision=0.20.*
+  - diffusers>=0.33,<0.36
+  - transformers>=4.50
   - accelerate
-  - diffusers[version='>=0.33,<0.36']
-  - torchvision=0.19
+  - pillow
+  - python-dotenv
   - huggingface_hub
-prefix: /Users/alejojamc/miniconda3/envs/green-ai
+  - sentencepiece
+  - protobuf
+  - pip
+  - pip:
+      - gguf>=0.10.0

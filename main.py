@@ -1,27 +1,41 @@
+import os
 import torch
-from diffusers import FluxPipeline
+from dotenv import load_dotenv
+from diffusers import FluxKontextPipeline
 from diffusers.utils import load_image
+from huggingface_hub import login
 
-MODEL_FILE = ".lmstudio/models/bullerwins/FLUX.1-Kontext-dev-GGUF/flux1-kontext-dev-Q8_0.gguf"
+load_dotenv()
 
-device = "mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu")
-dtype = torch.float16 if device != "cpu" else torch.float32
-print(f"Using device: {device}")
-print(f"Loading: {MODEL_FILE}")
+token = os.getenv("HUGGINGFACE_TOKEN")
+if token:
+    login(token=token)
 
-pipe = FluxPipeline.from_single_file(MODEL_FILE, torch_dtype=dtype).to(device)
+device = "cpu"
 
-# Loading the cat image
+print("Loading FLUX model...")
+pipe = FluxKontextPipeline.from_pretrained(
+    "black-forest-labs/FLUX.1-Kontext-dev",
+    torch_dtype=torch.float16,
+    use_safetensors=True
+)
+pipe.enable_model_cpu_offload()
+pipe = pipe.to(device)
+
+# Disable problematic attention optimization
+pipe.transformer.enable_xformers_memory_efficient_attention = False
+
 input_image = load_image(
     "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/diffusers/cat.png"
 )
 
-print("Adding hat to cat...")
-image = pipe(
+print("Generating image...")
+result = pipe(
+    prompt="Add a small red hat on the cat's head",
     image=input_image,
-    prompt="Add a hat to the cat",
-    guidance_scale=2.5
+    num_inference_steps=20,
+    guidance_scale=3.5
 ).images[0]
 
-image.save("cat_with_hat.png")
-print("Image saved as cat_with_hat.png")
+result.save("cat_with_hat.png")
+print("Image saved")
