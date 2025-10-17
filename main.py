@@ -1,33 +1,22 @@
-import os
 import torch
-from dotenv import load_dotenv
-from diffusers import StableDiffusionPipeline
+from diffusers import FluxPipeline
 from diffusers.utils import load_image
-from huggingface_hub import login
 
-load_dotenv()
+MODEL_FILE = ".lmstudio/models/bullerwins/FLUX.1-Kontext-dev-GGUF/flux1-kontext-dev-Q8_0.gguf"
 
-token = os.getenv("HUGGINGFACE_TOKEN")
-if token:
-    login(token=token)
-else:
-    print("Warning: HUGGINGFACE_TOKEN not found in .env file.")
-
-device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "mps" if torch.backends.mps.is_available() else ("cuda" if torch.cuda.is_available() else "cpu")
+dtype = torch.float16 if device != "cpu" else torch.float32
 print(f"Using device: {device}")
-dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+print(f"Loading: {MODEL_FILE}")
 
-print("Loading Stable Diffusion 1.5...")
-pipe = StableDiffusionPipeline.from_pretrained(
-    ## "black-forest-labs/FLUX.1-Kontext-dev", TODO at this moment not supported by my local CPU
-    "runwayml/stable-diffusion-v1-5",
-    torch_dtype=dtype # Using float32 for better compatibility with CPU
-)
-pipe = pipe.to(device)
+pipe = FluxPipeline.from_single_file(MODEL_FILE, torch_dtype=dtype).to(device)
 
+# Loading the cat image
 input_image = load_image(
-    "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/diffusers/cat.png")
+    "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/diffusers/cat.png"
+)
 
+print("Adding hat to cat...")
 image = pipe(
     image=input_image,
     prompt="Add a hat to the cat",
