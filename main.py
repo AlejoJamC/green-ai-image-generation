@@ -1,5 +1,6 @@
 import os
 import torch
+import numpy as np
 from dotenv import load_dotenv
 from diffusers import FluxKontextPipeline
 from diffusers.utils import load_image
@@ -15,7 +16,8 @@ device = "cpu"
 
 print("Loading FLUX model...")
 pipe = FluxKontextPipeline.from_pretrained(
-    "black-forest-labs/FLUX.1-Kontext-dev",
+    #"black-forest-labs/FLUX.1-Kontext-dev",
+    "Qwen/Qwen-Image-Edit",
     torch_dtype=torch.float16,
     use_safetensors=True
 )
@@ -37,5 +39,13 @@ result = pipe(
     guidance_scale=3.5
 ).images[0]
 
-result.save("cat_with_hat.png")
-print("Image saved")
+# Convert to numpy and check values
+result_np = np.array(result)
+print(f"Min: {result_np.min()}, Max: {result_np.max()}, Mean: {result_np.mean()}")
+
+# If values are NaN/inf, the generation failed
+if np.isnan(result_np).any() or np.isinf(result_np).any():
+    print("ERROR: Generated image contains invalid values")
+else:
+    result.save("cat_with_hat.png")
+    print("Image saved successfully")
