@@ -18,11 +18,14 @@ input_image = load_image(
 
 print("Generating image...")
 result = pipe(
-    prompt="Add a small red hat on the cat's head",
+    prompt="a cat wearing a red hat on top of its head, detailed, photorealistic",
+    negative_prompt="no hat, hatless, without hat",
     image=input_image,
-    strength=0.5,
-    num_inference_steps=20
+    strength=0.75,  # Greater strength = more alteration
+    num_inference_steps=30,
+    guidance_scale=7.5 # Higher guidance scale = closer to prompt
 ).images[0]
+
 
 result.save("cat_with_hat.png")
 print("Image saved")
