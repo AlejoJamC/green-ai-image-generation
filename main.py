@@ -16,8 +16,7 @@ device = "cpu"
 
 print("Loading FLUX model...")
 pipe = FluxKontextPipeline.from_pretrained(
-    #"black-forest-labs/FLUX.1-Kontext-dev",
-    "Qwen/Qwen-Image-Edit",
+    "black-forest-labs/FLUX.1-Kontext-dev",
     torch_dtype=torch.float16,
     use_safetensors=True
 )
