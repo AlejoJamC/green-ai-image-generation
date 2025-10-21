@@ -2,7 +2,7 @@ import os
 import torch
 import numpy as np
 from dotenv import load_dotenv
-from diffusers import FluxKontextPipeline
+from diffusers import DiffusionPipeline
 from diffusers.utils import load_image
 from huggingface_hub import login
 
@@ -15,7 +15,7 @@ if token:
 device = "cpu"
 
 print("Loading FLUX model...")
-pipe = FluxKontextPipeline.from_pretrained(
+pipe = DiffusionPipeline.from_pretrained(
     "black-forest-labs/FLUX.1-Kontext-dev",
     torch_dtype=torch.float16,
     use_safetensors=True

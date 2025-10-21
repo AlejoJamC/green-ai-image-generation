@@ -7,6 +7,8 @@ dependencies:
   - python=3.10
   - pytorch::pytorch=2.5.*
   - pytorch::torchvision=0.20.*
+  - jpeg
+  - libpng
   - diffusers>=0.33,<0.36
   - transformers>=4.50
   - accelerate
