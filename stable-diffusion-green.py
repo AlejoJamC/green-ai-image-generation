@@ -43,8 +43,8 @@ modern minimalist Dutch design aesthetic, technology and sustainability symbols,
 clean professional layout, abstract network connections, wind turbine silhouettes, 
 high quality, detailed"""
 
-process = psutil.Process()
-initial_memory = process.memory_info().rss / (1024 ** 3)
+# Measure system RAM instead of process RAM
+initial_memory = psutil.virtual_memory().used / (1024 ** 3)
 
 print("Generating LinkedIn banner...")
 start_time = time.time()
@@ -58,7 +58,7 @@ result = pipe(
 ).images[0]
 
 end_time = time.time()
-peak_memory = process.memory_info().rss / (1024 ** 3)
+peak_memory = psutil.virtual_memory().used / (1024 ** 3)
 
 generation_time = end_time - start_time
 memory_used = peak_memory - initial_memory
@@ -70,8 +70,8 @@ result.save("linkedin_banner_sdxl_baseline.png")
 
 print(f"\n=== Sustainability Metrics ===")
 print(f"Generation time: {generation_time:.2f}s")
-print(f"Peak memory usage: {peak_memory:.2f} GB")
-print(f"Memory increase: {memory_used:.2f} GB")
+print(f"System RAM used during generation: {memory_used:.2f} GB")
+print(f"Peak system RAM usage: {peak_memory:.2f} GB")
 print(f"Model size on disk: {model_size_gb:.2f} GB")
 print(f"Estimated energy: {energy_kwh * 1000:.4f} Wh (based on {CPU_TDP_WATTS}W TDP)")
 print(f"Estimated CO2: {co2_grams:.2f}g (based on {CO2_INTENSITY_G_PER_KWH}g/kWh grid)")
