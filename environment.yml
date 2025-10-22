@@ -17,6 +17,7 @@ dependencies:
   - huggingface_hub
   - sentencepiece
   - protobuf
+  - psutil
   - pip
   - pip:
       - gguf>=0.10.0
