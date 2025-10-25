@@ -21,4 +21,4 @@ dependencies:
   - pip
   - pip:
       - gguf>=0.10.0
-      - pruna-engine
+      - git+https://github.com/PrunaAI/pruna.git
