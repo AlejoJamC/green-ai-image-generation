@@ -21,3 +21,4 @@ dependencies:
   - pip
   - pip:
       - gguf>=0.10.0
+      - pruna-engine
